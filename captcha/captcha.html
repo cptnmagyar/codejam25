@@ -1,52 +1,377 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Joel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>Kiss Your Dog!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&display=swap" rel="stylesheet">
+    <style type="text/css">
+        html,
+        body {
+            background: black;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
 
-  <style type="text/css">
-    html,
-    body {
-      background: pink;
-      margin: 0;
-      padding: 0;
-      font-family: sans-serif;
-    }
+        * {
+            user-select: none;
+        }
 
-    #captcha-container {
-      background: white;
-      width: 390px;
-      height: 300px;
-    }
+        #captcha-container {
+            width: 400px;
+            height: 300px;
+            background-image: url('dog_01.png');
+            background-size: 400px 300px;
+            overflow: hidden;
+            display: flex;
+            justify-content: stretch;
+            align-items: stretch;
+        }
 
-    /* Your style here... */
-  </style>
+        #captcha-container-inner {
+            width: 100%;
+            padding: 8px;
+            margin: 8px;
+        }
+
+        #captcha-kiss-zone {
+            width: 50px;
+            height: 50px;
+            padding: 8px;
+            /* background color to display the kiss zone */
+            /* background-color: rgba(0, 255, 255, 0.329); */
+        }
+
+        #final-round-dog-kiss {
+            width: 250px;
+            height: 300px;
+            background-size: 250px 300px;
+            background-repeat: no-repeat;
+            background-image: url('dog_00.png');
+            visibility: hidden;
+            position: relative;
+        }
+
+        .custom-cursor-kiss-mark {
+            cursor:url('kiss_mark_small.png') 25 15, auto;
+        }
+
+        .custom-cursor-kiss-pucker {
+            cursor:url('kiss_pucker_small.png') 25 15, auto;
+        }
+
+        #title {
+            text-align: center;
+            font-size: 28px;
+            background: rgb(50 50 50 / 0.3);
+            font-family: "DynaPuff", system-ui;
+            font-weight: 400;
+            font-style: normal;
+            color: white;
+            text-shadow: 3px 3px 2px rgb(187, 138, 170);
+        }
+    </style>
 </head>
-
 <body>
-  <div id="captcha-container">
-    <!-- Add your CAPTCHA here: -->
-    Hello world!
+<div id="captcha-container">
+    <div id="captcha-container-inner">
+        <div id="title">KISS YOUR DOG: 0/10</div>
+        <div id="captcha-kiss-zone" onclick="kissTheDog();"></div>
+        <div id="final-round-dog-kiss" onclick="finalKissTheDog();"></div>
+    </div>
+</div>
+<script type="text/javascript">
 
-    <!-- We've added a sample button. Feel free to remove it: -->
-    <button id="solve">
-      Solve!
-    </button>
-  </div>
+    // Kissable Dog class for storing the kiss zone coordinates, kiss zone size, and dog image
+    // Uncomment the #captcha-kiss-zone's background-color in CSS to see the dog's kiss zone
+    class KissableDog {
+        constructor(kissZoneXCoordinate, kissZoneYCoordinate, kissZoneWidth, kissZoneHeight, backgroundImage, currentKisses, requiredKisses) {
+            this.kissZoneXCoordinate = kissZoneXCoordinate;
+            this.kissZoneYCoordinate = kissZoneYCoordinate;
+            this.kissZoneWidth = kissZoneWidth;
+            this.kissZoneHeight = kissZoneHeight;
+            this.backgroundImage = backgroundImage;
+            this.currentKisses = currentKisses;
+            this.requiredKisses = requiredKisses;
+        }
+    }
 
-  <script type="text/javascript">
-    (function(window, document){
-      // This is how you tell the parent window that the CAPTCHA was successful.
-      function captchaSuccess() {
-        window.top.postMessage("success", '*');
+    const dog01 = new KissableDog("145px", "50px", "40px", "25px", "url(dog_01.png)", 0, 0);
+    const dog02 = new KissableDog("215px", "55px", "30px", "10px", "url(dog_02.png)", 0, 0);
+    const dog03 = new KissableDog("70px", "60px", "40px", "15px", "url(dog_03.png)", 0, 0);
+    const dog04 = new KissableDog("240px", "110px", "40px", "15px", "url(dog_04.png)", 0, 0);
+    const dog05 = new KissableDog("200px", "70px", "30px", "15px", "url(dog_05.png)", 0, 0);
+    const dog06 = new KissableDog("225px", "70px", "30px", "10px", "url(dog_06.png)", 0, 0);
+    const dog07 = new KissableDog("180px", "110px", "35px", "15px", "url(dog_07.png)", 0, 0);
+    const dog08 = new KissableDog("160px", "70px", "30px", "10px", "url(dog_08.png)", 0, 0);
+    const dog09 = new KissableDog("140px", "60px", "35px", "15px", "url(dog_09.png)", 0, 0);
+    const dog10 = new KissableDog("165px", "120px", "40px", "15px", "url(dog_10.png)", 0, 0);
+    const dog11 = new KissableDog("215px", "55px", "25px", "10px", "url(dog_11.png)", 0, 0);
+    const dog12 = new KissableDog("145px", "80px", "40px", "15px", "url(dog_12.png)", 0, 0);
+    const dog13 = new KissableDog("145px", "50px", "40px", "15px", "url(dog_13.png)", 0, 0);
+    const dog14 = new KissableDog("120px", "55px", "40px", "15px", "url(dog_14.png)", 0, 0);
+    const dog15 = new KissableDog("150px", "80px", "40px", "15px", "url(dog_15.png)", 0, 0);
+    const dog16 = new KissableDog("160px", "75px", "40px", "15px", "url(dog_16.png)", 0, 0);
+    const dog17 = new KissableDog("120px", "90px", "30px", "15px", "url(dog_17.png)", 0, 0);
+    const dog18 = new KissableDog("135px", "60px", "40px", "20px", "url(dog_18.png)", 0, 0);
+    const dog19 = new KissableDog("100px", "55px", "35px", "20px", "url(dog_19.png)", 0, 0);
+    const dog20 = new KissableDog("115px", "75px", "35px", "20px", "url(dog_20.png)", 0, 0);
+    const dog21 = new KissableDog("225px", "55px", "35px", "20px", "url(dog_21.png)", 0, 0);
+    const dog22 = new KissableDog("75px", "60px", "30px", "20px", "url(dog_22.png)", 0, 0);
+    const dog23 = new KissableDog("175px", "50px", "35px", "20px", "url(dog_23.png)", 0, 0);
+    const dog24 = new KissableDog("135px", "55px", "35px", "20px", "url(dog_24.png)", 0, 0);
+    const dog25 = new KissableDog("170px", "95px", "35px", "20px", "url(dog_25.png)", 0, 0);
+    const dog26 = new KissableDog("210px", "65px", "35px", "20px", "url(dog_26.png)", 0, 0);
+    const dog27 = new KissableDog("170px", "105px", "30px", "15px", "url(dog_27.png)", 0, 0);
+    const dog28 = new KissableDog("85px", "65px", "35px", "25px", "url(dog_28.png)", 0, 0);
+    const dog29 = new KissableDog("272px", "75px", "40px", "25px", "url(dog_29.png)", 0, 0);
+    const dog30 = new KissableDog("40px", "45px", "25px", "10px", "url(dog_30.png)", 0, 0);
+    const dog31 = new KissableDog("145px", "85px", "60px", "35px", "url(dog_31.png)", 0, 0);
+    const dog32 = new KissableDog("225px", "75px", "40px", "20px", "url(dog_32.png)", 0, 0);
+    const dog33 = new KissableDog("170px", "70px", "45px", "15px", "url(dog_33.png)", 0, 0);
+    const dog34 = new KissableDog("50px", "110px", "45px", "25px", "url(dog_34.png)", 0, 0);
+    const dog35 = new KissableDog("80px", "50px", "35px", "15px", "url(dog_35.png)", 0, 0);
+    const dog36 = new KissableDog("110px", "60px", "35px", "20px", "url(dog_36.png)", 0, 0);
+    const dog37 = new KissableDog("200px", "140px", "35px", "20px", "url(dog_37.png)", 0, 0);
+    const dog38 = new KissableDog("150px", "45px", "35px", "20px", "url(dog_38.png)", 0, 0);
+    const dog39 = new KissableDog("60px", "45px", "30px", "15px", "url(dog_39.png)", 0, 0);
+    const dog40 = new KissableDog("240px", "110px", "35px", "20px", "url(dog_40.png)", 0, 0);
+    const dog41 = new KissableDog("160px", "105px", "35px", "20px", "url(dog_41.png)", 0, 0);
+    const dog42 = new KissableDog("75px", "115px", "30px", "15px", "url(dog_42.png)", 0, 0);
+    const dog43 = new KissableDog("195px", "95px", "30px", "20px", "url(dog_43.png)", 0, 0);
+    const dog44 = new KissableDog("20px", "110px", "30px", "20px", "url(dog_44.png)", 0, 0);
+    const dog45 = new KissableDog("175px", "35px", "35px", "25px", "url(dog_45.png)", 0, 0);
+    const dog46 = new KissableDog("30px", "60px", "30px", "20px", "url(dog_46.png)", 0, 0);
+
+    let kissableDogs = [dog01, dog02, dog03, dog04, dog05, dog06, dog07, dog08, dog09, dog10,
+    dog11, dog12, dog13, dog14, dog15, dog16, dog17, dog18, dog19, dog20, dog21, dog22, dog23,
+    dog24, dog25, dog26, dog27, dog28, dog29, dog30, dog31, dog32, dog33, dog34, dog35, dog36,
+    dog37, dog38, dog39, dog40, dog41, dog42, dog43, dog44, dog45, dog46];
+
+    // Adjusts the total amount of times you have to succesfully kiss your dog (if you kiss your dog)
+    // This value should be less than the amount of KissableDogs in the kissableDogs array
+    const totalDogsToKiss = 45;
+
+    // Change the randomized kiss floor and ceiling for total kisses required to progress to next image
+    let kissRequirementFloor = 4;
+    let kissRequirementCeiling = 16;
+
+    // Modifier is added to the required kisses for the next dog after each image progression
+    // To remove scaling after each image progression set this value to 0
+    let kissesRequiredModifier = 3;
+
+    // This value is added to the modifier after each image progression
+    let kissesRequiredScaling = 1;
+
+    // Interval of scaling (i.e. after how many images to apply the scaling)
+    let scaleInterval = 3;
+    
+    // Toggle the Final Round of Kissing your Dog on / off
+    let finalRoundActive = true;
+
+    // Final Dog Total Required Kisses to Give
+    let finalRoundKissesRequired = 100;
+
+    // Final Dog Values
+    let finalRoundStarted = false;
+    let finalRoundKissesGiven = 0;
+    let dogPosition = 0;
+    let dogDirection = 1;
+    const speed = 2; 
+    const maxPosition = 210;
+
+    // Standard Dog Values
+    let currentDog;
+    let currentDogIndex = 0;
+    let currentDogKisses = 0;
+    let kissableDogIndex = 0;
+    let kissMarks = [];
+    let kissed = false;
+    let currentScaleInterval = 1;
+
+    let captchaContainer  = document.getElementById("captcha-container");
+    let title = document.getElementById("title");
+    let kissZone = document.getElementById("captcha-kiss-zone");
+    let finalRoundDog = document.getElementById("final-round-dog-kiss");
+
+    // Loads initial dog to kiss
+    initializeKissesRequired();
+    loadDogToKiss(kissableDogs[currentDogIndex]);
+    
+    function initializeKissesRequired(){
+        kissableDogs.forEach(element => {
+            element.requiredKisses = getRandomInteger(kissRequirementFloor, kissRequirementCeiling);
+        });
+    }
+    
+    function loadDogToKiss(dog){
+        kissZone.style.marginLeft = dog.kissZoneXCoordinate;
+        kissZone.style.marginTop = dog.kissZoneYCoordinate;
+        kissZone.style.width = dog.kissZoneWidth;
+        kissZone.style.height = dog.kissZoneHeight;
+        captchaContainer.style.backgroundImage = dog.backgroundImage;
+        kissableDogs.splice(currentDogIndex, 1);
+        currentDog = dog;
+        currentDogKisses = 0;
+        applyKissRequirementScaling();
+        clearDogKisses();
+        setKissTitleText();
+    }
+
+    function applyKissRequirementScaling(){
+        if (kissesRequiredModifier >= 1){
+            currentDog.requiredKisses = getRandomInteger(kissRequirementFloor + kissesRequiredModifier, kissRequirementCeiling + kissesRequiredModifier);
+            
+            if (currentScaleInterval == scaleInterval) {
+                kissesRequiredModifier += kissesRequiredScaling;
+                currentScaleInterval = 1;
+            }
+            else {
+                currentScaleInterval += 1;
+            }
+        }
+    }
+
+    function clearDogKisses(){
+        let timer = setTimeout(() => {
+                kissMarks.forEach(element => {
+                    element.remove();
+            });
+        }, 50);
+    }
+    
+    function setKissTitleText(){
+        if (finalRoundStarted == true){
+            title.innerText = "FINAL ROUND: KISS!!!";
+        }
+        else  {
+            title.innerText = "KISS YOUR DOG: " + currentDogKisses + "/" + currentDog.requiredKisses;
+        }
+    }
+
+    function getRandomInteger(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function kissTheDog(){
+        
+        if (kissed == false){
+            currentDogKisses += 1;
+        }
+    
+        if (currentDogKisses >= currentDog.requiredKisses && kissed == false){
+            kissed = true;
+            if (kissableDogIndex < totalDogsToKiss){
+                let timer = setTimeout(() => {
+                    kissableDogIndex = kissableDogIndex + 1;
+                    if (kissableDogIndex > 3 && kissableDogIndex < totalDogsToKiss){
+                    currentDogIndex = Math.floor(Math.random() * kissableDogs.length);
+                    loadDogToKiss(kissableDogs[currentDogIndex]);
+                    }
+                    else {
+                    currentDogIndex = kissableDogIndex;
+                    loadDogToKiss(kissableDogs[currentDogIndex]);
+                    }
+                    kissed = false;
+            }, 1000);
+            }
       }
+      else {
+      }
+      setKissTitleText();
+    }
 
-      // Your CAPTCHA code goes here, we've added a simple example below:
-      document.getElementById('solve')
-           .addEventListener('click', () => captchaSuccess());
+    function finalKissTheDog(){
+        finalRoundKissesGiven += 1;
+    }
 
+    (function(window, document){
+        setCursorToLips();
+        
+        function setCursorToLips() {
+            captchaContainer.classList.remove('custom-cursor-kiss-pucker');
+            captchaContainer.classList.add('custom-cursor-kiss-mark');
+        }
+
+        function setCursorToPucker() {
+            captchaContainer.classList.remove('custom-cursor-kiss-mark');
+            captchaContainer.classList.add('custom-cursor-kiss-pucker');
+        }
+
+        function captchaSuccess() {
+            if (finalRoundActive == true && finalRoundKissesGiven > finalRoundKissesRequired) {
+                window.top.postMessage("success", '*');
+            }
+            
+            if (kissableDogIndex >= totalDogsToKiss && finalRoundActive == false){
+                window.top.postMessage("success", '*');
+            }
+        }
+        
+        function startFinalRound(){
+            finalRoundStarted = true
+            captchaContainer.style.backgroundImage = 'url(dog_final_round.png)';
+            kissZone.style.visibility = 'hidden';
+            kissZone.style.width = 0;
+            kissZone.style.height = 0;
+            kissZone.style.marginLeft = 0;
+            kissZone.style.marginTop = 0;
+            finalRoundDog.style.visibility = 'visible';
+            setKissTitleText();
+            window.setInterval(animateFinalDogImage, 10);
+            window.setInterval(clearDogKisses, 2500);
+        }
+
+        function animateFinalDogImage() {
+            dogPosition += dogDirection * speed;
+
+            if (dogPosition >= maxPosition || dogPosition <= 0) {
+                dogDirection *= -1; 
+            }
+            
+            finalRoundDog.style.left = dogPosition + 'px';
+        }
+
+        const kissYourDog =  (event) => {
+            setCursorToPucker()
+
+            if (kissableDogIndex >= totalDogsToKiss){
+                if (finalRoundActive == true && finalRoundStarted == false){
+                    startFinalRound();
+                }
+                else {
+                    captchaSuccess();
+                }
+            }
+        
+            let x = event.clientX - 25;
+            let y = event.clientY - 20;
+            coordinatesXString = x + "px"
+            coordinatesYString = y + "px"
+
+            const newImage = document.createElement('img');
+            newImage.src = 'kiss_mark_small.png';
+            newImage.style.width = '45px';
+            newImage.style.position = 'absolute';
+            newImage.style.marginLeft = coordinatesXString;
+            newImage.style.marginTop = coordinatesYString;
+            newImage.style.userSelect = "none";
+            newImage.style.pointerEvents = "none";
+            kissMarks.push(newImage);
+            captchaContainer.appendChild(newImage);
+
+            let timer = setTimeout(() => {
+                setCursorToLips()
+            }, 275);
+        }
+        
+      document.addEventListener('click', kissYourDog)
     })(window, document);
-  </script>
+</script>
 </body>
 </html>
